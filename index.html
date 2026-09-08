@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Portfólio | Sistemas e Sites</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Meu Portfólio</h1>
+    <p>Desenvolvimento de sistemas e sites sob medida</p>
+  </header>
+
+  <main>
+    <!-- Controles -->
+    <div class="controls">
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="todos">Todos</button>
+        <button class="filter-btn" data-filter="sistema">Sistemas</button>
+        <button class="filter-btn" data-filter="site">Sites</button>
+        <button class="filter-btn" data-filter="app">Aplicativos</button>
+      </div>
+      <input type="text" id="search" placeholder="Buscar projeto...">
+    </div>
+
+    <!-- Grade de projetos -->
+    <div class="grid" id="projects-grid">
+      <!-- Cards serão inseridos via JavaScript -->
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="close-modal">&times;</span>
+      <img id="modal-img" src="" alt="">
+      <h2 id="modal-title"></h2>
+      <p id="modal-desc"></p>
+      <div class="tech-tags" id="modal-tech"></div>
+      <div class="modal-links">
+        <a id="modal-link" href="#" target="_blank">Ver projeto</a>
+        <a id="modal-repo" href="#" target="_blank">Repositório</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 – Seu Nome</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

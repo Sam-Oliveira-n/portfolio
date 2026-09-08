@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "titulo": "Site Institucional AABB",
+    "categoria": "site",
+    "descricaoCurta": "Site institucional responsivo para a Associação Atlética Banco do Brasil.",
+    "descricaoLonga": "Desenvolvido com HTML, CSS e JavaScript puro, com layout moderno, galeria de fotos, seção de eventos e formulário de contato. O site foi projetado para apresentar a associação, seus departamentos e atividades.",
+    "imagem": "img/site-institucional.png",
+    "tecnologias": ["HTML", "CSS", "JavaScript"],
+    "link": "https://github.com/Sam-Oliveira-n/site_institucional",
+    "repositorio": "https://github.com/Sam-Oliveira-n/site_institucional"
+  },
+  {
+    "id": 2,
+    "titulo": "Sistema de Controle de Estoque",
+    "categoria": "sistema",
+    "descricaoCurta": "Sistema web em PHP para gerenciamento de estoque, produtos, entradas e saídas.",
+    "descricaoLonga": "Desenvolvido com PHP, MySQL e Bootstrap. Possui controle de usuários, níveis de acesso (admin e operador), registro de movimentações, relatórios e dashboard. A conexão com o banco é feita via PDO com prepared statements.",
+    "imagem": "img/controle-estoque.png",
+    "tecnologias": ["PHP", "MySQL", "Bootstrap"],
+    "link": "https://github.com/Sam-Oliveira-n/sistema_controle_estoque",
+    "repositorio": "https://github.com/Sam-Oliveira-n/sistema_controle_estoque"
+  }
+]
