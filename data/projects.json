@@ -20,5 +20,16 @@
     "tecnologias": ["PHP", "MySQL", "Bootstrap"],
     "link": "https://github.com/Sam-Oliveira-n/sistema_controle_estoque",
     "repositorio": "https://github.com/Sam-Oliveira-n/sistema_controle_estoque"
+  },
+  {
+    "id": 3,
+    "titulo": "Site portfolio - influencer",
+    "categoria": "site",
+    "descricaoCurta": "Site portfólio moderno para influenciador digital exibir seus trabalhos, parcerias e contatos. Layout responsivo e animações suaves.",
+    "descricaoLonga": "Site portfólio responsivo para influenciador digital, com galeria de fotos, integração com redes sociais, formulário de contato e painel administrativo para gerenciamento de conteúdo. Desenvolvido com HTML, CSS e JavaScript.",
+    "imagem": "img/portfolio-influencer.png",
+    "tecnologias": ["HTML", "CSS", "JavaScript"],
+    "link": "https://github.com/Sam-Oliveira-n/portfolio-influencer",
+    "repositorio": "https://github.com/Sam-Oliveira-n/portfolio-influencer"
   }
 ]
