@@ -1,66 +1,111 @@
-// Aguarda o carregamento do DOM
 document.addEventListener('DOMContentLoaded', () => {
-  // Elementos
-  const grid = document.getElementById('projects-grid');
+  /* ---------- Elementos ---------- */
+  const grid          = document.getElementById('projects-grid');
   const filterButtons = document.querySelectorAll('.filter-btn');
-  const searchInput = document.getElementById('search');
-  const modal = document.getElementById('modal');
-  const closeModal = document.getElementById('close-modal');
-  
-  let projects = [];
-  let currentFilter = 'todos';
-  let searchTerm = '';
+  const searchInput   = document.getElementById('search');
+  const modal         = document.getElementById('modal');
+  const closeModalBtn = document.getElementById('close-modal');
+  const themeToggle   = document.getElementById('theme-toggle');
+  const progressBar   = document.getElementById('scroll-progress');
+  const backToTop     = document.getElementById('back-to-top');
 
-  // Carrega os projetos do JSON
+  let projects      = [];
+  let currentFilter = 'todos';
+  let searchTerm    = '';
+
+  /* =========================================================
+     1. TEMA (dark/light com persistência)
+     ========================================================= */
+  const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('portfolio-theme', next);
+  });
+
+  /* =========================================================
+     2. CARREGAR PROJETOS
+     ========================================================= */
   fetch('data/projects.json')
-    .then(response => response.json())
+    .then(r => r.json())
     .then(data => {
       projects = data;
       renderProjects();
     })
-    .catch(error => console.error('Erro ao carregar projetos:', error));
+    .catch(err => {
+      console.error('Erro ao carregar projetos:', err);
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-light)">Não foi possível carregar os projetos.</p>';
+    });
 
-  // Renderiza os cards na grade
+  /* =========================================================
+     3. RENDERIZAR
+     ========================================================= */
   function renderProjects() {
     const filtered = filterProjects();
     grid.innerHTML = '';
 
     if (filtered.length === 0) {
-      grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Nenhum projeto encontrado.</p>';
+      grid.innerHTML = `
+        <p style="grid-column:1/-1;text-align:center;color:var(--text-light);padding:3rem 0;font-size:1.05rem">
+          Nenhum projeto encontrado 🔍
+        </p>`;
       return;
     }
 
-    filtered.forEach(project => {
-      const card = document.createElement('div');
+    filtered.forEach((project, index) => {
+      const card = document.createElement('article');
       card.className = 'card';
       card.setAttribute('data-id', project.id);
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `Ver detalhes de ${project.titulo}`);
+      card.style.transitionDelay = `${index * 70}ms`;
       card.innerHTML = `
         <img src="${project.imagem}" alt="${project.titulo}" loading="lazy">
         <div class="card-content">
           <h3>${project.titulo}</h3>
           <p>${project.descricaoCurta}</p>
           <div class="tags">
-            ${project.tecnologias.map(tech => `<span class="tag">${tech}</span>`).join('')}
+            ${project.tecnologias.map(t => `<span class="tag">${t}</span>`).join('')}
           </div>
         </div>
       `;
+
       card.addEventListener('click', () => openModal(project.id));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(project.id);
+        }
+      });
+
       grid.appendChild(card);
+      initTilt(card);
     });
+
+    // Reveal após renderizar
+    observeCards();
   }
 
-  // Filtra projetos com base no filtro e busca
+  /* =========================================================
+     4. FILTRAGEM
+     ========================================================= */
   function filterProjects() {
-    return projects.filter(project => {
-      const matchesFilter = currentFilter === 'todos' || project.categoria === currentFilter;
-      const matchesSearch = searchTerm === '' || 
-        project.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.descricaoCurta.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesFilter && matchesSearch;
+    const term = searchTerm.trim().toLowerCase();
+    return projects.filter(p => {
+      const matchFilter = currentFilter === 'todos' || p.categoria === currentFilter;
+      const matchSearch =
+        term === '' ||
+        p.titulo.toLowerCase().includes(term) ||
+        p.descricaoCurta.toLowerCase().includes(term) ||
+        p.tecnologias.some(t => t.toLowerCase().includes(term));
+      return matchFilter && matchSearch;
     });
   }
 
-  // Event listeners para filtros
   filterButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       filterButtons.forEach(b => b.classList.remove('active'));
@@ -70,64 +115,138 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Busca em tempo real
+  /* Busca com debounce */
+  let searchTimer;
   searchInput.addEventListener('input', (e) => {
-    searchTerm = e.target.value;
-    renderProjects();
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      searchTerm = e.target.value;
+      renderProjects();
+    }, 220);
   });
 
-  // Abre o modal com detalhes do projeto
+  /* =========================================================
+     5. REVEAL COM INTERSECTION OBSERVER
+     ========================================================= */
+  let cardObserver;
+  function observeCards() {
+    if (cardObserver) cardObserver.disconnect();
+    cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          cardObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.card').forEach(c => cardObserver.observe(c));
+  }
+
+  /* =========================================================
+     6. TILT 3D + BRILHO QUE SEGUE O MOUSE
+     ========================================================= */
+  function initTilt(card) {
+    const MAX_TILT = 7;
+
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const rotX = ((y - cy) / cy) * -MAX_TILT;
+      const rotY = ((x - cx) / cx) * MAX_TILT;
+
+      // Brilho segue o mouse
+      card.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
+      card.style.setProperty('--my', `${(y / rect.height) * 100}%`);
+
+      // Tilt
+      card.style.transform =
+        `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  }
+
+  /* =========================================================
+     7. MODAL
+     ========================================================= */
+  let lastFocused = null;
+
   function openModal(id) {
     const project = projects.find(p => p.id === id);
     if (!project) return;
 
-    document.getElementById('modal-img').src = project.imagem;
-    document.getElementById('modal-img').alt = project.titulo;
+    lastFocused = document.activeElement;
+
+    document.getElementById('modal-img').src       = project.imagem;
+    document.getElementById('modal-img').alt       = project.titulo;
     document.getElementById('modal-title').textContent = project.titulo;
-    document.getElementById('modal-desc').textContent = project.descricaoLonga;
+    document.getElementById('modal-desc').textContent  = project.descricaoLonga;
 
-    const techContainer = document.getElementById('modal-tech');
-    techContainer.innerHTML = project.tecnologias.map(tech => `<span class="tag">${tech}</span>`).join('');
+    document.getElementById('modal-tech').innerHTML =
+      project.tecnologias.map(t => `<span class="tag">${t}</span>`).join('');
 
-    const link = document.getElementById('modal-link');
-    if (project.link) {
-      link.href = project.link;
-      link.style.display = 'inline-block';
-    } else {
-      link.style.display = 'none';
-    }
+    toggleLink('modal-link', project.link);
+    toggleLink('modal-repo', project.repositorio);
 
-    const repo = document.getElementById('modal-repo');
-    if (project.repositorio) {
-      repo.href = project.repositorio;
-      repo.style.display = 'inline-block';
-    } else {
-      repo.style.display = 'none';
-    }
-
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden'; // trava scroll
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => closeModalBtn.focus(), 100);
   }
 
-  // Fecha o modal
+  function toggleLink(elId, url) {
+    const el = document.getElementById(elId);
+    if (url) {
+      el.href = url;
+      el.style.display = 'inline-flex';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
   function closeModalHandler() {
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    if (lastFocused) lastFocused.focus();
   }
 
-  closeModal.addEventListener('click', closeModalHandler);
-
-  // Fecha o modal ao clicar fora do conteúdo
+  closeModalBtn.addEventListener('click', closeModalHandler);
   modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
+    if (e.target === modal) closeModalHandler();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) {
       closeModalHandler();
     }
   });
 
-  // Fecha modal com tecla ESC
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.style.display === 'block') {
-      closeModalHandler();
+  /* =========================================================
+     8. SCROLL: progresso + back-to-top
+     ========================================================= */
+  function onScroll() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+
+    progressBar.style.width = pct + '%';
+
+    if (scrollTop > 500) {
+      backToTop.classList.add('show');
+    } else {
+      backToTop.classList.remove('show');
     }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 });

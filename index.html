@@ -1,18 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meu Portfólio | Sistemas e Sites</title>
+  <meta name="description" content="Portfólio de desenvolvimento de sistemas e sites sob medida.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header>
-    <h1>Meu Portfólio</h1>
-    <p>Desenvolvimento de sistemas e sites sob medida</p>
+  <!-- Barra de progresso de scroll -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- Fundo animado -->
+  <div class="bg-orbs" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+
+  <!-- Botão de tema -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+
+  <header class="hero">
+    <div class="hero-content">
+      <span class="badge">
+        <span class="pulse-dot"></span> Disponível para novos projetos
+      </span>
+      <h1>Meu <span class="gradient-text">Portfólio</span></h1>
+      <p class="hero-subtitle">Desenvolvimento de sistemas e sites sob medida</p>
+      <div class="hero-actions">
+        <a href="#projetos" class="btn btn-primary">
+          Ver projetos
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
   </header>
 
-  <main>
+  <main id="projetos">
     <!-- Controles -->
     <div class="controls">
       <div class="filters" id="filters">
@@ -21,32 +56,55 @@
         <button class="filter-btn" data-filter="site">Sites</button>
         <button class="filter-btn" data-filter="app">Aplicativos</button>
       </div>
-      <input type="text" id="search" placeholder="Buscar projeto...">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="search" placeholder="Buscar projeto...">
+      </div>
     </div>
 
     <!-- Grade de projetos -->
     <div class="grid" id="projects-grid">
-      <!-- Cards serão inseridos via JavaScript -->
+      <!-- Skeleton inicial -->
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
     </div>
   </main>
 
   <!-- Modal -->
-  <div class="modal" id="modal">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-content">
-      <span class="close-modal" id="close-modal">&times;</span>
-      <img id="modal-img" src="" alt="">
-      <h2 id="modal-title"></h2>
-      <p id="modal-desc"></p>
-      <div class="tech-tags" id="modal-tech"></div>
-      <div class="modal-links">
-        <a id="modal-link" href="#" target="_blank">Ver projeto</a>
-        <a id="modal-repo" href="#" target="_blank">Repositório</a>
+      <button class="close-modal" id="close-modal" aria-label="Fechar">&times;</button>
+      <div class="modal-image-wrap">
+        <img id="modal-img" src="" alt="">
+      </div>
+      <div class="modal-body">
+        <h2 id="modal-title"></h2>
+        <p id="modal-desc"></p>
+        <div class="tech-tags" id="modal-tech"></div>
+        <div class="modal-links">
+          <a id="modal-link" href="#" target="_blank" rel="noopener">
+            Ver projeto
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+          </a>
+          <a id="modal-repo" href="#" target="_blank" rel="noopener" class="btn-ghost-link">
+            Repositório
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          </a>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- Botão voltar ao topo -->
+  <button class="back-to-top" id="back-to-top" aria-label="Voltar ao topo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
   <footer>
-    <p>&copy; 2025 – Seu Nome</p>
+    <p>&copy; 2025 – Seu Nome. Feito com <span class="heart">♥</span></p>
   </footer>
 
   <script src="js/script.js"></script>
