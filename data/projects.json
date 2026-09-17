@@ -31,5 +31,16 @@
     "tecnologias": ["HTML", "CSS", "JavaScript"],
     "link": "https://sam-oliveira-n.github.io/portfolio-influencer/",
     "repositorio": "https://github.com/Sam-Oliveira-n/portfolio-influencer"
+  },
+  {
+    "id": 4,
+    "titulo": "Landing Page",
+    "categoria": "site",
+    "descricaoCurta": "Landing page para nutricionista com foco em conversão e integração direta com WhatsApp.",
+    "descricaoLonga": "Página única desenvolvida com HTML, CSS e JavaScript puro, simulando captação de clientes para uma nutricionista. Inclui hero com prova social, benefícios, como funciona, depoimentos, FAQ accordion, formulário que envia mensagem pré-formatada para o WhatsApp e botão flutuante. Otimizada com foco em SEO.",
+    "imagem": "img/landing-page.png",
+    "tecnologias": ["HTML", "CSS", "JavaScript", "Lighthouse"],
+    "link": "https://sam-oliveira-n.github.io/landing-page-alta-conversao/",
+    "repositorio": "https://github.com/Sam-Oliveira-n/landing-page-alta-conversao"
   }
 ]
