@@ -42,5 +42,16 @@
     "tecnologias": ["HTML", "CSS", "JavaScript", "Lighthouse"],
     "link": "https://sam-oliveira-n.github.io/landing-page-alta-conversao/",
     "repositorio": "https://github.com/Sam-Oliveira-n/landing-page-alta-conversao"
-  }
+  },
+  {
+    "id": 5,
+    "titulo": "Dashboard Analítico de Vendas",
+    "categoria": "sistema",
+    "descricaoCurta": "Dashboard interativo com gráficos, KPIs e análise de vendas para e-commerce.",
+    "descricaoLonga": "Painel analítico desenvolvido com HTML, CSS, JavaScript puro e Chart.js. Exibe KPIs (vendas totais, pedidos, ticket médio, taxa de conversão), três tipos de gráfico (linha, barra e doughnut), tabela de pedidos recentes, filtro por período (7/30/90 dias) e tema dark/light com persistência em localStorage. Totalmente responsivo, com sidebar colapsável no mobile.",
+    "imagem": "img/dashboard-analitico.jpg",
+    "tecnologias": ["HTML", "CSS", "JavaScript", "Chart.js"],
+    "link": "https://sam-oliveira-n.github.io/dashboard-analitico/",
+    "repositorio": "https://github.com/Sam-Oliveira-n/dashboard-analitico"
+  } 
 ]
